@@ -4,16 +4,7 @@
 #include <vector>
 #include <random>
 
-int* erase(const int* arr, int size, int index){
-    int* newarr= new int[size-1];
-    for(int i=0;i<index;i++){
-        newarr[i] = arr[i];
-    }
-    for(int i=index+1;i<size;i++){
-        newarr[i-1] = arr[i];
-    }
-    return newarr;
-}
+int* erase(const int* arr, int size, int index);
 
 std::random_device rd;
 std::mt19937& get_gen(){
