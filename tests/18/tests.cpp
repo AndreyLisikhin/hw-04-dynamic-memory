@@ -4,35 +4,31 @@
 #include <vector>
 #include <random>
 
-int* erase(const int* arr, int size, int index){
-    int* p = new int[size-1];
-    std::memcpy(p, arr, index);
-    std::memcpy(p+index-1, arr+index, size-index-1);
-}
+int* erase(const int* arr, int size, int index);
+
+std::random_device rd;
+std::mt19937 gen(rd());
+std::uniform_int_distribution<size_t> size_dist(1000, 5000);
+std::uniform_int_distribution<int> val_dist(1, 10000);
 
 void gen_vec(std::vector<int>& random_vector){
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<size_t> size_dist(1000, 5000);
     size_t random_size = size_dist(gen);
     random_vector.resize(random_size);
-    std::uniform_int_distribution<int> val_dist(1, 10000);
     std::generate(random_vector.begin(), random_vector.end(), [&]() {
         return val_dist(gen);
     });
 }
 
-TEST_CASE("testing concat") {
-    int cnt = 1000;
-    std::vector<int> vec1;
-    std::vector<int> vec2;
+TEST_CASE("testing erase") {
+    int cnt = 10000;
+    std::vector<int> vec;
     for(int i=0;i<cnt;i++){
-        gen_vec(vec1);
-        gen_vec(vec2);
-        int* vec_concat = concat(vec1.data(), vec1.size(), vec2.data(), vec2.size());
-        REQUIRE(vec_concat != nullptr);
-        CHECK(std::memcmp(vec_concat, vec1.data(), sizeof(int)*vec1.size()) == 0);
-        CHECK(std::memcmp(vec_concat+vec1.size(), vec2.data(), sizeof(int)*vec2.size()) == 0);
-        delete[] vec_concat;
+        gen_vec(vec);
+        int erase_index = val_dist(gen)%vec.size();
+        int* vec_erased = erase(vec.data(), vec.size(), erase_index);
+        REQUIRE(vec_erased != nullptr);
+        if(erase_index!=0) CHECK(std::memcmp(vec_erased, vec.data(), sizeof(int)*erase_index) == 0);
+        if(erase_index!=vec.size()-1) CHECK(std::memcmp(vec_erased+erase_index, vec.data()+erase_index+1, sizeof(int)*(vec.size() - erase_index-1)) == 0);
+        delete[] vec_erased;
     }
 }
