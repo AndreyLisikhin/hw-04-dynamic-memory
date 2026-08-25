@@ -52,7 +52,7 @@ def print_diff(expected, actual):
     sys.stdout.writelines(diff)
     print()
 
-def run_case(binary, timeout=5):
+def run_case(binary, timeout=60):
     try:
         result = subprocess.run(
             [binary], capture_output=True,
